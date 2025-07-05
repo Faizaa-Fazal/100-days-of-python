@@ -4,7 +4,7 @@ first_input=True
 
 while first_input:
 	try:
-		total_bill = round(float(input(What was the total bill?)),2)
+		total_bill = round(float(input("What was the total bill?")),2)
 		first_input=False
 	except:
 		print("Try again, you must only enter a numerical value representing the monetary amount.)"
