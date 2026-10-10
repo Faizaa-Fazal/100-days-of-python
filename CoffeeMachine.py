@@ -20,6 +20,9 @@ class CoffeeMachine:
     menu = {'latte': latte,
             'cappuccino': cappuccino,
             'espresso' : espresso}
+    price = {'latte': 2.5,
+             'cappuccino': 2.50,
+             'espresso' : 2.50}
 
     def __init__(self, water, milk, coffee, money):
         self.resource = { "Water" : water,
@@ -27,32 +30,50 @@ class CoffeeMachine:
                           "Coffee" : coffee }
         self.money = money
         self.prompt = ''
+        self.money_input = 0.00
 
-    def process_prompt(self, prompt):
-        if prompt == 'off':
+    def process_prompt(self):
+        if self.prompt == 'off':
             sys.exit()
-        elif prompt == 'report':
+        elif self.prompt == 'report':
             self.report()
-        elif prompt.lower in ('latte','cappuccino','espresso'):
-            if self.check_resources(self, prompt):
+        elif self.prompt in ('latte','cappuccino','espresso'):
+            if self.check_resources():
                 self.process_coins()
                 if self.transaction():
-                    self.make_coffee(prompt)
+                    self.make_coffee()
 
     def process_coins(self):
-        return True
+        print("Please insert coins.")
+        Quarters = int(input("Enter number of Quarters: "))
+        Dimes = int(input("Enter number of Dimes: "))
+        Nickles = int(input("Enter number of Nickles: "))
+        Pennies = int(input("Enter number of Pennies: "))
+        self.money_input = (0.25*Quarters) +(0.1*Dimes) + (0.05*Nickles) + (0.01*Pennies)
 
     def transaction(self):
-        return True
+        if self.price[self.prompt]>=self.money_input:
+            print("Sorry that's not enough money. Money refunded.")
+            self.money_input=0
+            return False
+        elif self.price[self.prompt]<=self.money_input:
+            self.money+=self.money_input
+            if self.price[self.prompt] < self.money_input:
+                print("Here is $", round((self.money_input - self.price[self.prompt]),2)," dollars in change.")
+            self.money_input=0
+            return True
 
-    def make_coffee(self, prompt):
-        print("Here is your ", prompt, ". Enjoy!")
+    def make_coffee(self):
+        for k, v in self.resource.items():
+            self.resource[k] -= self.menu[self.prompt][k]
+        print("Here is your ", self.prompt, ". Enjoy!")
 
     def on(self):
-        self.prompt = input("What would you like? (expresso/latte/cappuccino)")
+        self.prompt = input("What would you like? (espresso/latte/cappuccino)").lower()
+        self.process_prompt()
 
-    def check_resources(self, prompt):
-            for k,v in self.resource:
+    def check_resources(self):
+            for k,v in self.resource.items():
                 if self.resource[k]< self.menu[self.prompt.lower()][k]:
                     print("Sorry there is not enough ", k)
                     return False
@@ -64,7 +85,9 @@ class CoffeeMachine:
         print("Milk: ", self.resource['milk'], "ml")
         print("Coffee: ", self.resource['coffee'], "g")
         print("Money: $", self.money)
-prompt = input("What would you like? (expresso/latte/cappuccino)")
 
-prompt = prompt.lower()
 
+
+Nescafe = CoffeeMachine(1000,1000,1000,20)
+
+Nescafe.on()
